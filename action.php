@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	include 'config.php';
+	require_once '../config.php';
 
 	$update=false;
 	$id="";
@@ -8,18 +8,27 @@
 	$price="";
 	$size="";
 	$photo="";
+	$entry_time="";
+	$cat="";
+	$stock="";
+	$handler="";
+
 
 	if(isset($_POST['add'])){
 		$name=$_POST['name'];
 		$price=$_POST['price'];
 		$size=$_POST['size'];
+		$entry_time=$_POST['entry_time'];
+		$cat=$_POST['cat'];
+		$stock=$_POST['stock'];
+		$handler=$_POST['handler'];
 
 		$photo=$_FILES['image']['name'];
 		$upload="uploads/".$photo;
 
-		$query="INSERT INTO tblproduct(name,price,size,image)VALUES(?,?,?,?)";
+		$query="INSERT INTO tblproduct(name,price,size,image,entry_time,type,stock)VALUES(?,?,?,?,?,?,?)";
 		$stmt=$conn->prepare($query);
-		$stmt->bind_param("ssss",$name,$price,$size,$upload);
+		$stmt->bind_param("sssssss",$name,$price,$size,$upload,$entry_time,$cat,$stock);
 		$stmt->execute();
 		move_uploaded_file($_FILES['image']['tmp_name'], $upload);
 
@@ -62,16 +71,24 @@
 		$id=$row['id'];
 		$name=$row['name'];
 		$price=$row['price'];
+		$cat=$row['cat'];
 		$size=$row['size'];
+		$stock=$row['stock'];
 		$photo=$row['image'];
+	
+		
+	
+		
 
 		$update=true;
 	}
-	if(isset($_POST['update'])){
+if(isset($_POST['update'])){
 		$id=$_POST['id'];
 		$name=$_POST['name'];
 		$price=$_POST['price'];
+		$cat=$_POST['cat'];
 		$size=$_POST['size'];
+		$stock=$_POST['stock'];
 		$oldimage=$_POST['oldimage'];
 
 		if(isset($_FILES['image']['name'])&&($_FILES['image']['name']!="")){
@@ -82,15 +99,16 @@
 		else{
 			$newimage=$oldimage;
 		}
-		$query="UPDATE tblproduct SET name=?,price=?,size=?,image=? WHERE id=?";
+		$query="UPDATE tblproduct SET name=?,price=?,type=?,size=?,stock=?,image=? WHERE id=?";
 		$stmt=$conn->prepare($query);
-		$stmt->bind_param("ssssi",$name,$price,$size,$newimage,$id);
+		$stmt->bind_param("ssssssi",$name,$price,$cat,$size,$stock,$newimage,$id);
 		$stmt->execute();
 
 		$_SESSION['response']="Updated Successfully!";
 		$_SESSION['res_type']="primary";
 		header('location:index.php');
 	}
+
 
 	if(isset($_GET['details'])){
 		$id=$_GET['details'];
@@ -105,6 +123,9 @@
 		$vname=$row['name'];
 		$vprice=$row['price'];
 		$vsize=$row['size'];
+		$vtime=$row['entry_time'];
+		$vcat=$row['cat'];
+		$vstock=$row['stock'];
 		$vphoto=$row['image'];
 	}
 ?>
