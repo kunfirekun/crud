@@ -69,19 +69,62 @@
         <form action="action.php" method="post" enctype="multipart/form-data">
           <input type="hidden" name="id" value="<?= $id; ?>">
           <div class="form-group">
+               <label>Drink Name</label>
             <input type="text" name="name" value="<?= $name; ?>" class="form-control" placeholder="Enter name" required>
           </div>
           <div class="form-group">
+               <label>Drink Price</label>
             <input type="text" name="price" value="<?= $price; ?>" class="form-control" placeholder="Enter Price" required>
           </div>
           <div class="form-group">
-            <input type="text" name="size" value="<?= $phone; ?>" class="form-control" placeholder="Enter Product Size" required>
+               <label>Drink Type</label>
+             <select  name="cat" class="form-control" required>
+                  
+               <option value="<?= $cat; ?>"><?= $cat; ?></option>
+              <option value="beers">Beers</option> 
+              <option value="wines">Wines</option>  
+              <option value="spirits">Spirit</option>
+              <option value="mixers">Mixers</option>
+             
+             </select>
           </div>
+          <div class="form-group">
+               <label>Drink Size</label>
+             <select  name="size" class="form-control" required>
+                  
+              <option value="<?= $size; ?>"><?= $size; ?></option>
+              <option value="100ml">100 ml</option> 
+              <option value="250ml">250 ml</option>  
+              <option value="300ml">300 ml</option>
+              <option value="350ml">350 ml</option>
+              <option value="500ml">500 ml</option>
+              <option value="750ml">750 ml</option>
+              <option value="1ltr">1 Ltr</option>
+              <option value="1.5ltr">1.5 Ltrs</option>
+              <option value="2.0ltr">2.0 Ltrs</option>
+             </select>
+          </div>
+           <div class="form-group">
+             <label>Stock</label>
+             <input type="text" name="stock" value="<?= $stock; ?>" class="form-control" placeholder="Enter Stock" required>
+          </div> 
+                      
+            
           <div class="form-group">
             <input type="hidden" name="oldimage" value="<?= $photo; ?>">
             <input type="file" name="image" class="custom-file">
             <img src="<?= $photo; ?>" width="120" class="img-thumbnail">
           </div>
+          <div class="form-group">
+            <?php
+            date_default_timezone_set("Africa/Nairobi");
+            $time=date("d.m.Y, h:i:sa");
+            ?>
+                            
+            <input type="hidden" name="entry_time" class="form-control " value="<?php echo $time; ?>">
+          </div>
+                            
+        
           <div class="form-group">
             <?php if ($update == true) { ?>
             <input type="submit" name="update" class="btn btn-success btn-block" value="Update Record">
@@ -93,7 +136,7 @@
       </div>
       <div class="col-md-8">
         <?php
-          $query = 'SELECT * FROM crud';
+          $query = 'SELECT * FROM tblproduct';
           $stmt = $conn->prepare($query);
           $stmt->execute();
           $result = $stmt->get_result();
@@ -105,8 +148,10 @@
               <th>#</th>
               <th>Image</th>
               <th>Name</th>
+              <th>Type</th>
               <th>Price</th>
               <th>Size</th>
+              <th>Stock</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -114,10 +159,14 @@
             <?php while ($row = $result->fetch_assoc()) { ?>
             <tr>
               <td><?= $row['id']; ?></td>
-              <td><img src="<?= $row['photo']; ?>" width="25"></td>
+              <td><img src="<?= $row['image']; ?>" width="25"></td>
               <td><?= $row['name']; ?></td>
+              <td><?= $row['type']; ?></td>
               <td><?= $row['price']; ?></td>
               <td><?= $row['size']; ?></td>
+              <?php $number= $row['stock']; if($number <= 10){echo"<td style='background-color: #f05050d6;font-weight: 700;'> $number</td>";} elseif($number > 10){echo"<td style='background-color: #82e182;font-weight: 700;'> $number</td>"; }?>  
+             
+              
               <td>
                 <a href="details.php?details=<?= $row['id']; ?>" class="badge badge-primary p-2">Details</a> |
                 <a href="action.php?delete=<?= $row['id']; ?>" class="badge badge-danger p-2" onclick="return confirm('Do you want delete this record?');">Delete</a> |
